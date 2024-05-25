@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,19 +18,9 @@ class AuthController extends Controller
         $this->userService = $userService;
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 433);
-        }
-
-        $user = $this->userService->register($request->only('name', 'email', 'password'));
+        $user = $this->userService->register($request->validated());
 
         return response()->json([
             'message' => 'Berhasil Registerasi!',
@@ -36,12 +28,10 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         // Login pengguna
-        $loggedIn = $this->userService->login($request->only('email', 'password'));
-
-        if ($loggedIn) {
+        if ($this->userService->login($request->validated())) {
             return response()->json(['message' => 'User logged in successfully'], 200);
         }
 
