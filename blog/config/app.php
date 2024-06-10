@@ -169,6 +169,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\UserServiceProvider::class,
+        App\Providers\PostsServiceProvider::class,
+        App\Providers\CommentServiceProvider::class,
     ])->toArray(),
 
     /*

@@ -5,15 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
-class RegisterRequest extends FormRequest
+class StorePostsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -24,23 +25,20 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8'
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'Nama Harus Diisi',
-            'name.string' => 'Nama Harus Teks',
-            'name.max' => 'Nama Maksimal 255 Karakter',
-            'email.required' => 'Email Wajib Diisi',
-            'email.email' => 'Email Harus Sebuah Email yang Valid',
-            'email.unique' => 'Email Sudah Terdaftar',
-            'password.required' => 'Password Wajib Diisi',
-            'password.min' => 'Password Minimal 8 karakter',
+            'title.required' => 'Judul wajib diisi',
+            'content.required' => 'Konten wajib diisi',
+            'image.image' => 'File yang diunggah wajib sebuah gambar',
+            'image.mimes' => 'Gambar wajib: jpeg, png, jpg, gif',
+            'image.max' => 'Ukuran gambar maksimal 2048 MB',
         ];
     }
 

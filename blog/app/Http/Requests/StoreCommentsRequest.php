@@ -5,15 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
-class LoginRequest extends FormRequest
+class StoreCommentsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -24,18 +25,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'email' => 'required|email',
-            'password' => 'required'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'email.required' => 'Email wajib diisi',
-            'email.email' => 'Email Wajib Email yang valid',
-            'password.required' => 'Password wajib diisi',
+            'user_id' => 'required',
+            'content' => 'required'
         ];
     }
 
@@ -43,8 +34,8 @@ class LoginRequest extends FormRequest
     {
         $errors = $validator->errors();
         throw new HttpResponseException(response()->json([
-            'message' => 'Validation failed',
-            'errors' => $errors,
+            'status' => false,
+            'errors' => $errors
         ], 422));
     }
 }

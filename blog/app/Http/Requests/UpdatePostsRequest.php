@@ -5,15 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
-class RegisterRequest extends FormRequest
+class UpdatePostsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -24,23 +25,17 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8'
+            'title' => 'string|max:255',
+            'content' => 'string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
-            'name.required' => 'Nama Harus Diisi',
-            'name.string' => 'Nama Harus Teks',
-            'name.max' => 'Nama Maksimal 255 Karakter',
-            'email.required' => 'Email Wajib Diisi',
-            'email.email' => 'Email Harus Sebuah Email yang Valid',
-            'email.unique' => 'Email Sudah Terdaftar',
-            'password.required' => 'Password Wajib Diisi',
-            'password.min' => 'Password Minimal 8 karakter',
+            'title.required' => 'Title is required',
+            'content.required' => 'Content is required',
         ];
     }
 
@@ -48,8 +43,8 @@ class RegisterRequest extends FormRequest
     {
         $errors = $validator->errors();
         throw new HttpResponseException(response()->json([
-            'message' => 'Validation failed',
-            'errors' => $errors,
+            'status' => false,
+            'message' => $errors
         ], 422));
     }
 }
